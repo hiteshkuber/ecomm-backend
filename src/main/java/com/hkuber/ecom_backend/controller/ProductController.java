@@ -3,11 +3,12 @@ package com.hkuber.ecom_backend.controller;
 import com.hkuber.ecom_backend.model.Product;
 import com.hkuber.ecom_backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,23 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public List<Product> getProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<Product>> getProducts() {
+        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.FOUND);
+    }
+
+    @GetMapping("/products/{id}")
+    public Product getProduct(@PathVariable int id) {
+        return productService.getProduct(id);
+    }
+
+    @GetMapping("/products/{id}/image")
+    public Product getProductImage(@PathVariable int id) {
+        return productService.getProduct(id);
+    }
+
+    @PostMapping("/products")
+    public ResponseEntity<Void> postProduct(@RequestPart Product product, @RequestPart MultipartFile multipartFile) throws IOException {
+        HttpStatus status = productService.postProduct(product, multipartFile) != null ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
+        return new ResponseEntity<>(status);
     }
 }
