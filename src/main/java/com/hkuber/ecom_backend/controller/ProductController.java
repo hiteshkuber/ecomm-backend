@@ -4,6 +4,7 @@ import com.hkuber.ecom_backend.model.Product;
 import com.hkuber.ecom_backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,8 +36,10 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}/image")
-    public Product getProductImage(@PathVariable int id) {
-        return productService.getProduct(id);
+    public ResponseEntity<byte[]> getProductImage(@PathVariable int id) {
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(productService.getProduct(id).getImageType()))
+                .body(productService.getProduct(id).getImageData());
     }
 
     @PostMapping("/products")
